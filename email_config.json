@@ -1,7 +1,0 @@
-{
-    "smtp_server": "smtp.gmail.com",
-    "smtp_port": 465,
-    "sender": "aggarwalaayush26@gmail.com",
-    "app_password": "rzfj qfof bfeo nbqm",
-    "recipient": ["monica.murthy1806@gmail.com", "aggarwalaayush26@gmail.com"]
-}

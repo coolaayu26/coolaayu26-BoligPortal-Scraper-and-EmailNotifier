@@ -1,21 +1,20 @@
 name: BoligPortal Notifier
 
 # Schedule times are in UTC — GitHub Actions has no timezone-aware cron.
-# Denmark is UTC+2 in summer (CEST) and UTC+1 in winter (CET). The times
-# below (7 min past 6,10,14,18 UTC) target roughly 8am/12pm/4pm/8pm
-# Copenhagen time during CEST (summer). When DST ends in late October,
-# shift each hour back by one (5,9,13,17) to keep hitting the same
-# local times — or just leave it and accept a 1-hour drift twice a
-# year, which doesn't matter much for this use case.
+# Denmark is UTC+2 in summer (CEST) and UTC+1 in winter (CET). This
+# targets roughly 6:45am, 12:07pm, 4:07pm, 8:07pm Copenhagen time
+# during CEST (summer). When DST ends in late October, shift each
+# hour back by one (3:45, 9:07, 13:07, 17:07 UTC) to keep hitting the
+# same local times.
 #
-# The ":07" offset (instead of exactly on the hour) is deliberate:
-# GitHub Actions gets a surge of scheduled jobs at round hours from
-# every repo doing the same thing, which causes queue delays. An
-# off-beat minute avoids most of that congestion and runs closer to
-# on-time.
+# Off-beat minutes (:45 / :07 instead of :00) are deliberate — GitHub
+# Actions gets a surge of scheduled jobs at round hours from every
+# repo doing the same thing, which causes queue delays. Off-beat
+# minutes avoid most of that congestion.
 on:
   schedule:
-    - cron: '7 6,10,14,18 * * *'
+    - cron: '45 4 * * *'
+    - cron: '7 10,14,18 * * *'
   workflow_dispatch:  # lets you trigger a run manually from the Actions tab, for testing
 
 permissions:

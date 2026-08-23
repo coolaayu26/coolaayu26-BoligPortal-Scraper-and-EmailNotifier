@@ -1,5 +1,5 @@
 {
     "MAIN_URL": "https://www.boligportal.dk/lejeboliger/k%C3%B8benhavn/?offset=0",
-    "RESULTS_PAGES": 1,
+    "RESULTS_PAGES": 10,
     "OUTPUT_PATH": "../data/bp_ads.csv"
 }

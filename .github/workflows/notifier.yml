@@ -1,0 +1,54 @@
+name: BoligPortal Notifier
+
+# Schedule times are in UTC — GitHub Actions has no timezone-aware cron.
+# Denmark is UTC+2 in summer (CEST) and UTC+1 in winter (CET). The times
+# below (6,10,14,18 UTC) target 8am/12pm/4pm/8pm Copenhagen time during
+# CEST (summer). When DST ends in late October, shift each hour back by
+# one (5,9,13,17 UTC) to keep hitting the same local times — or just
+# leave it and accept a 1-hour drift twice a year, which doesn't matter
+# much for this use case.
+on:
+  schedule:
+    - cron: '0 6,10,14,18 * * *'
+  workflow_dispatch:  # lets you trigger a run manually from the Actions tab, for testing
+
+permissions:
+  contents: write  # needed to commit the updated seen_ids.json back to the repo
+
+jobs:
+  check-listings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pandas requests openpyxl
+
+      - name: Write email config from secrets
+        run: |
+          cat > email_config.json << EOF
+          {
+            "smtp_server": "smtp.gmail.com",
+            "smtp_port": 465,
+            "sender": "${{ secrets.GMAIL_SENDER }}",
+            "app_password": "${{ secrets.GMAIL_APP_PASSWORD }}",
+            "recipient": ${{ secrets.GMAIL_RECIPIENTS_JSON }}
+          }
+          EOF
+
+      - name: Run notifier
+        run: python3 daily_notifier.py
+
+      - name: Commit updated seen_ids.json
+        run: |
+          git config user.name "boligportal-bot"
+          git config user.email "actions@github.com"
+          git add data/seen_ids.json
+          git diff --staged --quiet || git commit -m "Update seen listings"
+          git push

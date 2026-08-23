@@ -1,0 +1,6 @@
+email_config.json
+data/*.csv
+data/*.xlsx
+__pycache__/
+*.pyc
+.DS_Store
